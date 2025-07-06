@@ -1,5 +1,7 @@
+export const dynamic = "force-dynamic";
 import Form from '@/components/form';
 import { prisma } from '../lib/prisma';
+
 export default async function Home() {
   const recommendations = await prisma.recommendation.findMany({
       orderBy: {
