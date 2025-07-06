@@ -1,0 +1,21 @@
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Recommendation {
+  id        Int      @id @default(autoincrement())
+  link      String
+  comment   String
+  name      String
+  genres    String[]
+  artist    String[]
+  imageLink String
+  createdAt DateTime @default(now())
+}

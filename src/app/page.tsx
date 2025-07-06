@@ -1,103 +1,43 @@
-import Image from "next/image";
+import Form from '@/components/form';
+import { prisma } from '../lib/prisma';
+export default async function Home() {
+  const recommendations = await prisma.recommendation.findMany({
+      orderBy: {
+          createdAt: "desc"
+      },
+      take: 15
+  });
 
-export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="w-10/12 max-w-7xl ml-auto mr-auto mt-8">
+      <h1 className="text-4xl sm:text-5xl text-center p-4 pr-0 pl-0 break-all hyphens-auto">Song suggestions</h1>
+      <p className="text-center">If you have any song suggestions please leave a Spotify link below</p>
+      <p></p>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      <Form/>
+
+      <div className="recommendations sm:w-10/12 mt-16">
+        <h1 className="text-4xl">Latest recommendations</h1>
+        {recommendations.map(recommendation => (
+            <div className="recommendation flex flex-col sm:flex-row space-x-4 p-4 mb-4 mt-1" key={recommendation.id}>
+                <img className="w-full sm:w-48 rounded-xl" src={recommendation.imageLink} alt="album cover" />
+
+                <div className="info">
+                  <a href={recommendation.link}><h1 className="text-4xl sm:text-2xl text-main" key={recommendation.id}>{recommendation.name}</h1></a>
+                  <p>{recommendation.artist.join(", ")}</p>
+                  <p className='italic before:content-["] after:content-["]'>{recommendation.comment}</p>
+                  <div className="genres flex h-8 space-x-2 items-center mt-8">
+                    {recommendation.genres.map(genre => (
+                      <div key={genre} className="bg-main w-fit p-2 pt-1 pb-1 rounded-xl">
+                        <p>{genre}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              
+            </div>
+        ))}
+      </div>
     </div>
   );
 }
