@@ -7,7 +7,7 @@ export default async function Home() {
       orderBy: {
           createdAt: "desc"
       },
-      take: 15
+      take: 25
   });
 
   return (
